@@ -1,0 +1,66 @@
+syntax = "proto3";
+package aiserver.v1;
+
+// Wire-compatible subset of the app's AvailableModels response. The product
+// has many presentation and pricing fields; the local picker only needs these.
+message AvailableModelsResponse {
+  repeated string model_names = 1;
+  repeated AvailableModel models = 2;
+  FeatureModelConfig composer_model_config = 4;
+  FeatureModelConfig background_composer_model_config = 6;
+  FeatureModelConfig plan_execution_model_config = 7;
+  FeatureModelConfig quick_agent_model_config = 10;
+  bool use_model_parameters = 11;
+  ModelPickerDisplayConfiguration display_configuration = 15;
+
+  message AvailableModel {
+    string name = 1;
+    bool default_on = 2;
+    optional bool supports_agent = 5;
+    optional bool supports_thinking = 9;
+    optional bool supports_images = 10;
+    optional bool supports_auto_context = 11;
+    optional bool supports_non_max_mode = 19;
+    optional string client_display_name = 17;
+    optional string server_model_name = 18;
+    optional bool supports_plan_mode = 22;
+    optional bool is_user_added = 23;
+    optional string inputbox_short_model_name = 24;
+    optional bool supports_sandboxing = 25;
+    optional bool supports_cmd_k = 26;
+    optional bool is_hidden = 35;
+    optional string tagline = 39;
+    optional bool visible_in_routed_model_view = 40;
+    optional string vendor_name = 41;
+    optional ModelVendor vendor = 42;
+  }
+
+  message FeatureModelConfig {
+    string default_model = 1;
+    repeated string fallback_models = 2;
+    repeated string best_of_n_default_models = 3;
+  }
+
+  message ModelVendor {
+    ModelVendorId id = 1;
+    string display_name = 2;
+  }
+
+  enum ModelVendorId {
+    MODEL_VENDOR_ID_UNSPECIFIED = 0;
+    MODEL_VENDOR_ID_ANTHROPIC = 1;
+    MODEL_VENDOR_ID_OPENAI = 2;
+    MODEL_VENDOR_ID_GOOGLE = 3;
+    MODEL_VENDOR_ID_XAI = 4;
+    MODEL_VENDOR_ID_MOONSHOT = 5;
+    MODEL_VENDOR_ID_CURSOR = 6;
+    MODEL_VENDOR_ID_NVIDIA = 7;
+    MODEL_VENDOR_ID_ZAI = 8;
+    MODEL_VENDOR_ID_META = 9;
+  }
+
+  message ModelPickerDisplayConfiguration {
+    optional bool hide_search_bar = 3;
+    optional bool hide_add_models = 4;
+  }
+}

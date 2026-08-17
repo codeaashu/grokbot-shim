@@ -1,0 +1,30 @@
+{
+  "name": "grokbot-shim",
+  "version": "1.0.0",
+  "description": "Run the Grok Bot desktop agent locally with configurable model providers.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "doctor": "bash scripts/doctor.sh",
+    "check": "for file in shim/*.mjs test/*.mjs; do node --check \"$file\"; done && bash -n ./*.sh scripts/*.sh",
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "agent",
+    "computer-use",
+    "grok",
+    "llm"
+  ],
+  "author": "aashuu",
+  "license": "ISC",
+  "private": false,
+  "dependencies": {
+    "protobufjs": "^8.7.2"
+  },
+  "devDependencies": {
+    "@electron/asar": "^4.2.1"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "default": "GPT-5.6-Luna (Codex)",
+  "models": {
+    "GPT-5.6-Sol (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "low",
+      "fallback": "MiMo-v2.5"
+    },
+    "GPT-5.6-Terra (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.6-terra",
+      "reasoning_effort": "medium",
+      "fallback": "MiMo-v2.5"
+    },
+    "GPT-5.6-Luna (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.6-luna",
+      "reasoning_effort": "max",
+      "fallback": "MiMo-v2.5"
+    },
+    "GPT-5.5 (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.5",
+      "reasoning_effort": "medium",
+      "fallback": "MiMo-v2.5"
+    },
+    "GPT-5.4 (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.4",
+      "reasoning_effort": "medium",
+      "fallback": "MiMo-v2.5"
+    },
+    "GPT-5.4-Mini (Codex)": {
+      "provider": "codex-oauth",
+      "model": "gpt-5.4-mini",
+      "reasoning_effort": "medium",
+      "fallback": "MiMo-v2.5"
+    },
+    "MiMo-v2.5": {
+      "provider": "openai-compatible",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "xiaomi/mimo-v2.5",
+      "env_key": "OPENROUTER_API_KEY"
+    },
+    "GLM-5.2": {
+      "provider": "openai-compatible",
+      "base_url": "https://openrouter.ai/api/v1",
+      "model": "z-ai/glm-5.2",
+      "env_key": "OPENROUTER_API_KEY"
+    }
+  }
+}
