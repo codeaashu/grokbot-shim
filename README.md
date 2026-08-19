@@ -9,7 +9,7 @@ the Computer environment on the same machine. The user can watch or take over
 the desktop through noVNC.
 
 The repository does not include application binaries. Setup extracts the
-required runtime files from the user's installed copy of Grok Bot.
+required runtime files from the user's installed copy of Grok Bot
 
 ## Status
 
