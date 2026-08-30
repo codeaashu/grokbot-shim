@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/load-env.sh"
 GROKBOT_RESOURCES="${GROKBOT_RESOURCES:-/opt/Grok Bot/resources}"
 ASAR="$GROKBOT_RESOURCES/app.asar"
 UNPACKED="$GROKBOT_RESOURCES/app.asar.unpacked"
@@ -56,11 +57,10 @@ if [[ ! -f "$ROOT/certs/localhost.pem" || ! -f "$ROOT/certs/localhost.key" ]]; t
 fi
 
 echo "extracting the host runtime from the local Grok Bot installation..."
-(
-  cd "$ROOT/host/dist/host"
-  "$ROOT/node_modules/.bin/asar" extract-file "$ASAR" dist/host/host-main.cjs
-  "$ROOT/node_modules/.bin/asar" extract-file "$ASAR" dist/host/host-main.cjs.map
-)
+EXTRACTED="$(mktemp -d "${TMPDIR:-/tmp}/grokbot-shim.XXXXXX")"
+trap 'find "$EXTRACTED" -depth -delete' EXIT
+"$ROOT/node_modules/.bin/asar" extract "$ASAR" "$EXTRACTED"
+cp -a "$EXTRACTED/dist/host/." "$ROOT/host/dist/host/"
 cp -a "$UNPACKED/dist/deps/." "$ROOT/host/dist/deps/"
 
 if [[ ! -s "$ROOT/host/dist/host/host-main.cjs" ]]; then

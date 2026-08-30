@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/load-env.sh"
 GROKBOT_APP="${GROKBOT_APP:-/opt/Grok Bot/sand}"
 failed=0
 
@@ -33,6 +34,7 @@ check_file "$ROOT/certs/rootCA.pem"
 check_file "$ROOT/certs/localhost.pem"
 check_file "$ROOT/certs/localhost.key"
 check_file "$ROOT/host/dist/host/host-main.cjs"
+check_file "$ROOT/host/dist/host/agent-isolation/agent-store-worker.cjs"
 
 if command -v docker >/dev/null 2>&1 && ! docker info >/dev/null 2>&1; then
   echo "unavailable  Docker daemon"

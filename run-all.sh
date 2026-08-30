@@ -6,6 +6,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$ROOT/scripts/load-env.sh"
 
+port_up() {
+  curl -fsS --max-time 1 \
+    -H "Authorization: Bearer ${SAND_HOST_GATEWAY_TOKEN:-shim-gateway-token}" \
+    http://127.0.0.1:8550/health >/dev/null 2>&1
+}
+
 if [[ ! -s "$ROOT/host/dist/host/host-main.cjs" || ! -f "$ROOT/certs/localhost.pem" ]]; then
   echo "local runtime files are missing; run: npm run setup" >&2
   exit 1
@@ -16,13 +22,16 @@ if "$ROOT/computerctl.sh" status >/dev/null 2>&1; then
   COMPUTER_WAS_RUNNING=1
 fi
 HOST_WAS_RUNNING=0
-if ss -ltn 2>/dev/null | grep -q '127.0.0.1:8550'; then
+if port_up; then
   HOST_WAS_RUNNING=1
 fi
 HOST_PID=""
 
 cleanup() {
-  [ -n "$HOST_PID" ] && kill "$HOST_PID" 2>/dev/null || true
+  if [ -n "$HOST_PID" ]; then
+    kill "$HOST_PID" 2>/dev/null || true
+    "$ROOT/run-host.sh" --stop >/dev/null 2>&1 || true
+  fi
   if [ "$HOST_WAS_RUNNING" -eq 0 ]; then
     "$ROOT/shimctl.sh" stop >/dev/null 2>&1 || true
   fi
@@ -42,10 +51,10 @@ else
   HOST_PID=$!
   echo "host gateway starting (pid $HOST_PID), log: $ROOT/logs/host.out"
   for _ in $(seq 1 40); do
-    ss -ltn 2>/dev/null | grep -q '127.0.0.1:8550' && break
+    port_up && break
     sleep 0.25
   done
-  if ! ss -ltn 2>/dev/null | grep -q '127.0.0.1:8550'; then
+  if ! port_up; then
     echo "host gateway did not come up; tail $ROOT/logs/host.out" >&2
     exit 1
   fi

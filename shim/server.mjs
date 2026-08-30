@@ -38,6 +38,7 @@ function envelope(payload) {
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PORT = Number(process.env.PORT ?? 8443);
+const BIND_HOST = process.env.BIND_HOST ?? "127.0.0.1";
 const MODE = process.env.MODE ?? "stub"; // stub | forward
 const UPSTREAM = process.env.UPSTREAM ?? "https://api2.cursor.sh";
 const LOG_DIR = path.join(ROOT, "logs");
@@ -286,7 +287,7 @@ const server = https.createServer(
   },
 );
 
-server.listen(PORT, "127.0.0.1", () => {
+server.listen(PORT, BIND_HOST, () => {
   console.log(`grokbot-shim recon server: https://localhost:${PORT} (mode=${MODE})`);
   console.log(`capture log: ${path.join(LOG_DIR, `capture-${stamp}.jsonl`)}`);
   if (MODE === "forward") console.log(`upstream: ${UPSTREAM}`);

@@ -13,7 +13,7 @@ required runtime files from the user's installed copy of Grok Bot
 
 ## Status
 
-Working on Linux:
+Working on Linux and Intel macOS:
 
 - local Grok Bot login and agent lifecycle;
 - streamed text, reasoning state, and tool calls;
@@ -28,7 +28,8 @@ the desktop application changes.
 
 ## Requirements
 
-- Linux with the Grok Bot desktop application installed;
+- Linux with Grok Bot installed, or Intel macOS with Grok Bot installed and an
+  extracted Linux x64 Grok Bot runtime;
 - Node.js 22.12 or newer;
 - Docker with a running daemon;
 - OpenSSL and curl;
@@ -45,10 +46,24 @@ elsewhere.
 git clone <your-repository-url>
 cd grokbot-shim
 npm ci
-npm run setup
 cp .env.example .env       # optional; add provider keys if needed
+npm run setup
 ./run-all.sh
 ```
+
+On macOS, extract an official Linux x64 build that contains `resources/app.asar`
+into an ignored local directory such as `runtime/Grok Bot`, then uncomment and
+adjust the macOS paths in `.env.example` before running setup:
+
+```bash
+cp .env.example .env
+npm run setup
+./run-all.sh
+```
+
+The native macOS application remains the UI. The Linux host runtime and backend
+shim run inside the Computer container because the macOS application bundle
+does not include the host executable or its Linux native dependencies.
 
 `npm run setup` generates a local TLS certificate and extracts the required
 host runtime from your installed copy of Grok Bot. Those generated files stay
@@ -225,4 +240,3 @@ I build tech businesses through SaaS products across every layer of the internet
 
 Connect here:<br>
 Website [www.aashuu.me](https://www.aashuu.me) ✦  𝕏 [@warrioraashuu](https://x.com/warrioraashuu) ✦  LinkedIn [@warrioraashuu](https://www.linkedin.com/in/warrioraashuu/)
-

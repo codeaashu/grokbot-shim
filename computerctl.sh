@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$ROOT/scripts/load-env.sh"
 CONTAINER="${GROKBOT_COMPUTER_CONTAINER:-grokbot-computer}"
 IMAGE="${GROKBOT_COMPUTER_IMAGE:-public.ecr.aws/k0i0n2g5/cursorenvironments/universal@sha256:dcac90cba36653f261988b1c88d11b7655493d455c4af0a18c5991ddaa5da020}"
 
@@ -54,6 +56,19 @@ start() {
       echo "pulling Grok Bot computer image (first run is several GB)..."
       docker pull "$IMAGE"
     fi
+    EXTRA_ARGS=()
+    if [[ -n "${GROKBOT_RUNTIME_DIR:-}" ]]; then
+      [[ -d "$GROKBOT_RUNTIME_DIR" ]] || { echo "Grok Bot runtime not found: $GROKBOT_RUNTIME_DIR" >&2; exit 1; }
+      EXTRA_ARGS+=(
+        -p 127.0.0.1:8443:8443
+        -p 127.0.0.1:8550:8550
+        -v "$ROOT:/grokbot-shim"
+        -v "$GROKBOT_RUNTIME_DIR:/opt/Grok Bot:ro"
+      )
+      if [[ -n "${CODEX_AUTH_DIR:-}" ]]; then
+        EXTRA_ARGS+=(-v "$CODEX_AUTH_DIR:/codex:ro")
+      fi
+    fi
     docker run -d \
       --name "$CONTAINER" \
       --restart unless-stopped \
@@ -63,6 +78,7 @@ start() {
       -p 127.0.0.1:1339:1339 \
       -p 127.0.0.1:6080:6080 \
       -p 127.0.0.1:6081:6081 \
+      "${EXTRA_ARGS[@]}" \
       -v grokbot-computer-workspace:/workspace \
       -v grokbot-computer-chrome:/home/box/chrome-profile \
       -v grokbot-computer-data:/home/box/sand-data \
@@ -113,7 +129,7 @@ case "${1:-status}" in
     ;;
   open)
     status >/dev/null
-    xdg-open http://127.0.0.1:6080/vnc.html
+    if [[ "$(uname -s)" == "Darwin" ]]; then open http://127.0.0.1:6080/vnc.html; else xdg-open http://127.0.0.1:6080/vnc.html; fi
     ;;
   *)
     echo "usage: $0 {start|stop|restart|status|logs|open}" >&2

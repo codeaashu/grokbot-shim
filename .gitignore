@@ -1,0 +1,9 @@
+.env
+appdata/
+certs/
+host/
+logs/
+node_modules/
+runtime/
+state/
+

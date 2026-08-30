@@ -28,6 +28,7 @@ fi
 
 echo "backend: $SAND_BACKEND_URL  dev-login: $SAND_DEV_LOGIN ($SAND_DEV_LOGIN_EMAIL)"
 echo "NOTE: using isolated user-data-dir at $ROOT/appdata (real login untouched)"
+unset ELECTRON_RUN_AS_NODE
 # --no-sandbox has to be on the command line for the Computer preview to draw.
 # The preview is a <webview> on the box's noVNC page and the app marks that guest
 # sandboxed, but the app's own in-process no-sandbox switch lands too late for it,
