@@ -42,6 +42,8 @@ elsewhere.
 
 ## Quick start
 
+### Linux
+
 ```bash
 git clone <your-repository-url>
 cd grokbot-shim
@@ -51,11 +53,16 @@ npm run setup
 ./run-all.sh
 ```
 
+### macOS
+
 On macOS, extract an official Linux x64 build that contains `resources/app.asar`
 into an ignored local directory such as `runtime/Grok Bot`, then uncomment and
 adjust the macOS paths in `.env.example` before running setup:
 
 ```bash
+git clone <your-repository-url>
+cd grokbot-shim
+npm ci
 cp .env.example .env
 npm run setup
 ./run-all.sh

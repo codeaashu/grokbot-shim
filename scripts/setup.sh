@@ -60,6 +60,7 @@ echo "extracting the host runtime from the local Grok Bot installation..."
 EXTRACTED="$(mktemp -d "${TMPDIR:-/tmp}/grokbot-shim.XXXXXX")"
 trap 'find "$EXTRACTED" -depth -delete' EXIT
 "$ROOT/node_modules/.bin/asar" extract "$ASAR" "$EXTRACTED"
+find "$ROOT/host/dist/host" -mindepth 1 -depth -delete
 cp -a "$EXTRACTED/dist/host/." "$ROOT/host/dist/host/"
 cp -a "$UNPACKED/dist/deps/." "$ROOT/host/dist/deps/"
 

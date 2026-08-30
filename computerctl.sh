@@ -25,6 +25,16 @@ is_running() {
   [ "$(docker inspect -f '{{.State.Running}}' "$CONTAINER" 2>/dev/null || true)" = "true" ]
 }
 
+has_runtime_config() {
+  [[ -z "${GROKBOT_RUNTIME_DIR:-}" ]] && return 0
+  local mounts ports
+  mounts="$(docker inspect -f '{{range .Mounts}}{{println .Destination}}{{end}}' "$CONTAINER")"
+  ports="$(docker inspect -f '{{json .HostConfig.PortBindings}}' "$CONTAINER")"
+  grep -Fxq '/grokbot-shim' <<<"$mounts" &&
+    grep -Fxq '/opt/Grok Bot' <<<"$mounts" &&
+    [[ "$ports" == *'"8443/tcp"'* && "$ports" == *'"8550/tcp"'* ]]
+}
+
 is_ready() {
   curl -fsS --max-time 2 http://127.0.0.1:6080/vnc.html >/dev/null 2>&1 &&
     curl -sS --max-time 2 http://127.0.0.1:1337/health >/dev/null 2>&1
@@ -45,6 +55,11 @@ wait_ready() {
 start() {
   require_docker
   if exists; then
+    if ! has_runtime_config; then
+      echo "computer container lacks the configured runtime mounts or ports: $CONTAINER" >&2
+      echo "Recreate it, then run start again: $0 stop && docker rm $CONTAINER" >&2
+      exit 1
+    fi
     if is_running; then
       echo "computer container already running: $CONTAINER"
     else
